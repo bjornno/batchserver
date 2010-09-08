@@ -78,7 +78,7 @@ public class BatchApplicationTest extends CamelSpringTestSupport {
     public void shouldSendFiles() throws Exception {
         template.sendBodyAndHeader("file://data/from", getOkFile(), Exchange.FILE_NAME, "okfile.txt");
         Thread.sleep(2000);
-        template.sendBody("seda:plukkUt", null);
+        template.sendBody("direct:plukkUt", null);
         Thread.sleep(2000);
         File target = new File("data/to");
         assertTrue("Not created any files", target.list().length==3);
@@ -90,7 +90,7 @@ public class BatchApplicationTest extends CamelSpringTestSupport {
         template.sendBodyAndHeader("file://data/from", getOkFile(), Exchange.FILE_NAME, "okfile.txt");
         template.sendBodyAndHeader("file://data/from", getWrongFormatFile(), Exchange.FILE_NAME, "errorfile.txt");
         Thread.sleep(2000);
-        template.sendBody("seda:plukkUt", null);
+        template.sendBody("direct:plukkUt", null);
         Thread.sleep(2000);
         assertEquals(1, jdbcTemplate.queryForInt("select count(*) from errormessages"));
         assertEquals(5, jdbcTemplate.queryForInt("select count(*) from events"));

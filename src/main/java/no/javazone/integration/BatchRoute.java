@@ -36,7 +36,15 @@ public class BatchRoute extends SpringRouteBuilder {
                 .idempotentConsumer(header("CamelFileName"),getApplicationContext().getBean("mottaData", MottaData.class))
                 .to("bean:mottaData");
 
-        
+
+        from("quartz://myGroup/myTimerName?cron=0+0+12+*+*+?+*+MON-FRI?stateful=true")
+                .to("direct:plukkUt");
+
+        from("direct:plukkUt")
+                .transacted()
+                .to("bean:plukkUtData");
+
+
     }
 
 }
