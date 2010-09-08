@@ -15,7 +15,12 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-     <resource-ref>
+    <servlet-mapping>
+        <servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+        <url-pattern>/console/*</url-pattern>
+    </servlet-mapping>
+
+    <resource-ref>
         <description>Primary Datasource</description>
         <res-ref-name>jdbc/Ds</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>

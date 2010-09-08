@@ -41,9 +41,10 @@
     </bean>
 
     <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
-        <package>no.javazone.integration
-        </package>
+        <package>no.javazone.integration</package>
     </camelContext>
+
+    <context:component-scan base-package="no.javazone.controller"/>
 
     <bean id="mottaData" class="no.javazone.domain.MottaData">
         <constructor-arg><ref bean="dataSource"/></constructor-arg>

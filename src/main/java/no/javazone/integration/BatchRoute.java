@@ -33,18 +33,27 @@ public class BatchRoute extends SpringRouteBuilder {
 
         from("file://data/from/?preMove=inprogress/&move=../done/&moveFailed=../error")
                 .transacted()
+                .wireTap("direct:dbeventlog",
+                        simple("insert into events (key,message) values ('${exchangeId}','received file ${header.CamelFileName} ')"))
                 .idempotentConsumer(header("CamelFileName"),getApplicationContext().getBean("mottaData", MottaData.class))
                 .to("bean:mottaData");
 
+
+        //from("jetty:http://localhost:9090/plukkUt")
+        //        .to("direct:plukkUt");
 
         from("quartz://myGroup/myTimerName?cron=0+0+12+*+*+?+*+MON-FRI?stateful=true")
                 .to("direct:plukkUt");
 
         from("direct:plukkUt")
                 .transacted()
+                .wireTap("direct:dbeventlog",
+                        simple("insert into events (key,message) values ('${exchangeId}','plukker ut data')"))
                 .to("bean:plukkUtData");
 
         from("seda:writeFile")
+                .wireTap("direct:dbeventlog",
+                        simple("insert into events (key,message) values ('${exchangeId}','writing file ${header.CamelFileName} ')"))
                 .to("file:data/to?tempPrefix=inprogress/");
     }
 
