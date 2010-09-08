@@ -163,6 +163,11 @@
             <artifactId>camel-jdbc</artifactId>
             <version>${camel.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-quartz</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <defaultGoal>clean deploy</defaultGoal>
