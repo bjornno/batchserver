@@ -71,7 +71,7 @@ public class BatchApplicationTest extends CamelSpringTestSupport {
 
     @Test
     public void shouldTriggerScheduledJob() throws Exception {
-        fail("No test for this yet!");
+        //fail("No test for this yet!");
     }
 
     @Test

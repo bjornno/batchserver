@@ -44,7 +44,8 @@ public class BatchRoute extends SpringRouteBuilder {
                 .transacted()
                 .to("bean:plukkUtData");
 
-
+        from("seda:writeFile")
+                .to("file:data/to?tempPrefix=inprogress/");
     }
 
 }
