@@ -29,8 +29,8 @@ public class PlukkUtData {
             String recordLine = (String) record.get("RECORD");
             int version = (Integer) record.get("VERSION");
             int nextversion = version + 1;
-            List li = map.get(key);
-            int numrows = jdbcTemplate.update("update appdata set status = 1, version = "+ nextversion +"  where status = 0 and key = "+ key +" and version = " + version);
+            List li = map.get(recordLine.substring(0,4));
+            int numrows = jdbcTemplate.update("update appdata set status = 1, version = "+ nextversion +"  where status = 0 and key = '"+ key +"' and version = " + version);
             if (numrows != 1) {
                 throw new DoNotRetryException("optimistic lock error");
             }
@@ -39,7 +39,7 @@ public class PlukkUtData {
             } else {
                 ArrayList list = new ArrayList();
                 list.add(recordLine);
-                map.put(key, list);
+                map.put(recordLine.substring(0,4), list);
             }
         }
 

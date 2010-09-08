@@ -39,8 +39,8 @@ public class BatchRoute extends SpringRouteBuilder {
                 .to("bean:mottaData");
 
 
-        //from("jetty:http://localhost:9090/plukkUt")
-        //        .to("direct:plukkUt");
+        from("jetty:http://localhost:9090/plukkUt")
+                .to("direct:plukkUt");
 
         from("quartz://myGroup/myTimerName?cron=0+0+12+*+*+?+*+MON-FRI?stateful=true")
                 .to("direct:plukkUt");

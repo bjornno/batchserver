@@ -35,6 +35,24 @@
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="localOverride" value="true"/>
+        <property name="properties">
+            <bean class="org.apache.commons.configuration.ConfigurationConverter" factory-method="getProperties">
+                <constructor-arg>
+                    <bean class="org.apache.commons.configuration.DatabaseConfiguration">
+                        <constructor-arg ref="dataSource"/>
+                        <constructor-arg>
+                            <value>application_properties</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>key</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>value</value>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
         <property name="location" value="file:application.properties"/>
         <property name="ignoreResourceNotFound" value="true"/>
         <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
@@ -46,11 +64,11 @@
 
     <context:component-scan base-package="no.javazone.controller"/>
 
+    <bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent"/>
+
     <bean id="mottaData" class="no.javazone.domain.MottaData">
         <constructor-arg><ref bean="dataSource"/></constructor-arg>
     </bean>
-
-    <bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent"/>
 
     <bean id="plukkUtData" class="no.javazone.domain.PlukkUtData">
         <constructor-arg><ref bean="dataSource"/></constructor-arg>
