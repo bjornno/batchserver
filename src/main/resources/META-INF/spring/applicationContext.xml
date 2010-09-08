@@ -20,7 +20,7 @@
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="localOverride" value="true"/>
-
+         <!--
         <property name="properties">
             <bean class="org.apache.commons.configuration.ConfigurationConverter" factory-method="getProperties">
                 <constructor-arg>
@@ -39,6 +39,7 @@
                 </constructor-arg>
             </bean>
         </property>
+        -->
         <property name="location" value="file:application.properties"/>
         <property name="ignoreResourceNotFound" value="true"/>
         <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
