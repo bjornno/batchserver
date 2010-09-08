@@ -15,6 +15,20 @@
         <property name="jndiName" value="jdbc/Ds"/>
     </bean>
 
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
+    </bean>
+
+    <bean id="PROPAGATION_REQUIRES_NEW" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_NEW"/>
+    </bean>
+
     <jdbc:initialize-database data-source="dataSource" enabled="true">
         <jdbc:script location="classpath:db/migrations/*.sql"/>
     </jdbc:initialize-database>
@@ -31,6 +45,8 @@
         </package>
     </camelContext>
 
-    <bean id="mottaData" class="no.javazone.domain.MottaData"/>
+    <bean id="mottaData" class="no.javazone.domain.MottaData">
+        <constructor-arg><ref bean="dataSource"/></constructor-arg>
+    </bean>
 
 </beans>

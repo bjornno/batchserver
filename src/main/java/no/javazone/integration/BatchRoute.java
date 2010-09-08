@@ -9,6 +9,7 @@ public class BatchRoute extends SpringRouteBuilder {
     public void configure() throws Exception {
 
         from("file://data/from/?preMove=inprogress/&move=../done/&moveFailed=../error")
+                .transacted()
                 .to("bean:mottaData");
 
     }

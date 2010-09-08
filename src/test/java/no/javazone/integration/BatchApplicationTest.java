@@ -32,7 +32,7 @@ public class BatchApplicationTest extends CamelSpringTestSupport {
     @Test
     public void shouldMoveOkfilesToDone() throws Exception {
         template.sendBodyAndHeader("file://data/from", getOkFile(), Exchange.FILE_NAME, "okfile.txt");
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         File target = new File("data/from/done/okfile.txt");
         assertTrue("file not moved to done", target.exists());
     }
