@@ -2,6 +2,7 @@ package no.javazone.domain;
 
 import org.apache.camel.Body;
 import org.apache.camel.Header;
+import org.apache.camel.spi.IdempotentRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -11,9 +12,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 
-public class MottaData {
+public class MottaData implements IdempotentRepository {
 
     private JdbcTemplate jdbcTemplate;
     private int batchSize = 1000;
@@ -60,5 +62,29 @@ public class MottaData {
             sqls.toArray (sqlStrings);
             jdbcTemplate.batchUpdate(sqlStrings);
         }
+    }
+
+    public boolean add(Object o) {
+        if (contains(o)) {
+            Logger.getLogger(MottaData.class.getName()).warning("Received duplicate file, not processed");
+            return false;
+        } else {
+            jdbcTemplate.execute("insert into idempotent values ('"+ o +"')");
+            return true;
+        }
+    }
+
+    public boolean contains(Object o) {
+        Integer i = jdbcTemplate.queryForObject("select count(*) from idempotent where checksum = '"+ o +"'", Integer.class);
+        return (i.intValue() > 0);
+    }
+
+    public boolean remove(Object o) {
+        // no need, rollback will handle;
+        return true;
+    }
+
+    public boolean confirm(Object o) {
+        return true;
     }
 }

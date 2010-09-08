@@ -1,6 +1,7 @@
 package no.javazone.integration;
 
 import no.javazone.domain.DoNotRetryException;
+import no.javazone.domain.MottaData;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.spring.SpringRouteBuilder;
 
@@ -32,6 +33,7 @@ public class BatchRoute extends SpringRouteBuilder {
 
         from("file://data/from/?preMove=inprogress/&move=../done/&moveFailed=../error")
                 .transacted()
+                .idempotentConsumer(header("CamelFileName"),getApplicationContext().getBean("mottaData", MottaData.class))
                 .to("bean:mottaData");
 
         
