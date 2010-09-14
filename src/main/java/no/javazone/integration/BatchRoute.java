@@ -1,6 +1,5 @@
 package no.javazone.integration;
 
-import no.javazone.domain.DoNotRetryException;
 import no.javazone.domain.MottaData;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.spring.SpringRouteBuilder;
@@ -20,10 +19,7 @@ public class BatchRoute extends SpringRouteBuilder {
                 .wireTap("direct:dbeventlog",
                         simple("insert into errormessages (key,message) values ('${exchangeId}','${exception.message} ')"));
 
-        onException(DoNotRetryException.class)
-                .wireTap("direct:dbeventlog",
-                        simple("insert into errormessages (key,message) values ('${exchangeId}','${exception.message} ')"))
-                .maximumRedeliveries(0);
+   
 
         from("direct:dbeventlog")
                 .to("jdbc:dataSource");

@@ -83,7 +83,7 @@ public class PlukkUtData {
             sum+=results[i];
         }
         if (sum != sqls.size()) {
-            throw new DoNotRetryException("Failed on optimistic locking");
+            throw new RuntimeException("Failed on optimistic locking");
         }
     }
     

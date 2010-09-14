@@ -30,6 +30,7 @@
     </bean>
 
     <jdbc:initialize-database data-source="dataSource" enabled="${db.provision}">
+        <jdbc:script location="classpath:db/clean/drop-tables.sql"/>
         <jdbc:script location="classpath:db/migrations/*.sql"/>
         <jdbc:script location="classpath:db/environments/${db.environment}-properties.sql"/>
     </jdbc:initialize-database>
