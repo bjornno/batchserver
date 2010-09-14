@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public class MottaData implements IdempotentRepository {
 
     private JdbcTemplate jdbcTemplate;
-    private int batchSize = 1000;
+    private int batchSize = 5000;
 
     public MottaData(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);

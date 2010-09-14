@@ -40,12 +40,12 @@ public class BatchRoute extends SpringRouteBuilder {
 
 
         from("jetty:http://localhost:9090/plukkUt")
-                .to("direct:plukkUt");
+                .inOnly("seda:plukkUt") ;
 
         from("quartz://myGroup/myTimerName?cron=0+0+12+*+*+?+*+MON-FRI?stateful=true")
-                .to("direct:plukkUt");
+                .inOnly("seda:plukkUt");
 
-        from("direct:plukkUt")
+        from("seda:plukkUt")
                 .transacted()
                 .wireTap("direct:dbeventlog",
                         simple("insert into events (key,message) values ('${exchangeId}','plukker ut data')"))

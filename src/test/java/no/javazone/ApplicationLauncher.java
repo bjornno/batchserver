@@ -1,10 +1,10 @@
 package no.javazone;
+
 import org.apache.commons.dbcp.BasicDataSource;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.plus.naming.EnvEntry;
-import org.mortbay.jetty.security.SslSocketConnector;
 
 import javax.naming.NamingException;
 
