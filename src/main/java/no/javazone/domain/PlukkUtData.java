@@ -6,6 +6,7 @@ import org.apache.camel.ProducerTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.util.*;
 
 
@@ -27,7 +28,14 @@ public class PlukkUtData {
         for (Map<String,Object> record : records) {
             String key = (String) record.get("KEY");
             String recordLine = (String) record.get("RECORD");
-            int version = (Integer) record.get("VERSION");
+            int version = 0;
+            Object versionObj = record.get("VERSION");
+            // uffda
+            if (versionObj instanceof Integer) {
+                version = (Integer) versionObj;
+            } else {
+                version = ((BigDecimal) versionObj).intValue();
+            }
             int nextversion = version + 1;
             List li = map.get(recordLine.substring(0,4));
             int numrows = jdbcTemplate.update("update appdata set status = 1, version = "+ nextversion +"  where status = 0 and key = '"+ key +"' and version = " + version);
