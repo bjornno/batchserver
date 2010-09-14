@@ -6,6 +6,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.plus.naming.EnvEntry;
 import org.mortbay.jetty.webapp.WebAppContext;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,7 +29,14 @@ public class Start {
 
     public static void main(String[] args) throws Exception {
         Properties properties = loadProperties();
-        ComboPooledDataSource dataSource = new ComboPooledDataSource();
+      //  ComboPooledDataSource dataSource = new ComboPooledDataSource();
+        SingleConnectionDataSource dataSource = new SingleConnectionDataSource();
+        dataSource.setDriverClassName(properties.getProperty("jdbc.driver"));
+        dataSource.setUrl(properties.getProperty("jdbc.url"));
+        dataSource.setUsername(properties.getProperty("jdbc.username"));
+        dataSource.setPassword(properties.getProperty("jdbc.password"));
+        dataSource.setSuppressClose(true);
+        /*
         dataSource.setDriverClass(properties.getProperty("jdbc.driver"));
         dataSource.setJdbcUrl(properties.getProperty("jdbc.url"));
         dataSource.setUser(properties.getProperty("jdbc.username"));
@@ -37,7 +45,7 @@ public class Start {
         dataSource.setMinPoolSize(Integer.parseInt(properties.getProperty("jdbc.minPoolSize")));
         dataSource.setAcquireIncrement(Integer.parseInt(properties.getProperty("jdbc.poolIncrement")));
         dataSource.setMaxPoolSize(Integer.parseInt(properties.getProperty("jdbc.maxPoolSize")));
-
+        */
         new EnvEntry("jdbc/Ds", dataSource);
         Server server = new Server();
         Connector defaultConnector = new SocketConnector();
@@ -69,7 +77,6 @@ public class Start {
         try {
             properties.load(new FileInputStream("application.properties"));
         } catch (IOException e) {
-            properties.put("server.port", "8080");
             properties.put("jdbc.driver", "org.hsqldb.jdbcDriver");
             properties.put("jdbc.url", "jdbc:hsqldb:file:database");
             properties.put("jdbc.username", "sa");
@@ -77,6 +84,9 @@ public class Start {
             properties.put("jdbc.minPoolSize", "5");
             properties.put("jdbc.poolIncrement", "5");
             properties.put("jdbc.maxPoolSize", "20");
+            properties.put("server.port", "8080");
+            properties.put("db.provision", "true");
+            properties.put("db.environment", "test");
             try {
                 properties.store(new FileOutputStream("application.properties"), null);
             } catch (Exception ex) {

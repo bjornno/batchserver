@@ -28,7 +28,7 @@ public class BatchApplicationTest extends CamelSpringTestSupport {
         deleteDirectory("logs");
         super.tearDown();
     }
-
+              
     @Test
     public void shouldMoveOkfilesToDone() throws Exception {
         template.sendBodyAndHeader("file://data/from", getOkFile(), Exchange.FILE_NAME, "okfile.txt");
@@ -88,12 +88,10 @@ public class BatchApplicationTest extends CamelSpringTestSupport {
     public void shouldSendEventsForAppconsole() throws Exception {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(applicationContext.getBean("dataSource", DataSource.class));
         template.sendBodyAndHeader("file://data/from", getOkFile(), Exchange.FILE_NAME, "okfile.txt");
-        template.sendBodyAndHeader("file://data/from", getWrongFormatFile(), Exchange.FILE_NAME, "errorfile.txt");
         Thread.sleep(2000);
         template.sendBody("direct:plukkUt", null);
         Thread.sleep(2000);
-        assertEquals(1, jdbcTemplate.queryForInt("select count(*) from errormessages"));
-        assertEquals(5, jdbcTemplate.queryForInt("select count(*) from events"));
+        assertEquals(4, jdbcTemplate.queryForInt("select count(*) from events"));
     }
 
     String getOkFile() {
