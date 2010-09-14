@@ -13,7 +13,7 @@ import java.util.*;
 public class PlukkUtData {
 
     private JdbcTemplate jdbcTemplate;
-
+    private boolean optimisticLock = true;
     @EndpointInject()
     ProducerTemplate producer;
 
@@ -21,12 +21,25 @@ public class PlukkUtData {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    public void setOptimisticLock(boolean optimisticLock) {
+        this.optimisticLock = optimisticLock;
+    }
+
     public void plukkUt(Exchange exchange) {
-        List<Map<String, Object>> records = jdbcTemplate.queryForList("select * from appdata where status = 0");
+        List<Map<String, Object>> records = null;
+        if (optimisticLock) {
+            records = jdbcTemplate.queryForList("select * from appdata where status = 0");
+        } else {
+            records = jdbcTemplate.queryForList("select * from appdata where status = 0 for update");
+        }
         HashMap<String, List> map = new HashMap<String, List>();
         List<String> sqlupdates = new ArrayList<String>();
         groupRecordsOnOutFiles(records, map, sqlupdates);
-        batchUpdate(sqlupdates);
+        if (optimisticLock) {
+            batchUpdateOptimisticLock(sqlupdates);
+        } else {
+            batchUpdatePessimisticLock(sqlupdates);
+        }
         writeFiles(map);
     }
 
@@ -44,7 +57,11 @@ public class PlukkUtData {
             }
             int nextversion = version + 1;
             List li = map.get(recordLine.substring(0,4));
-            sqlupdates.add("update appdata set status = 1, version = "+ nextversion +"  where status = 0 and key = '"+ key +"' and version = " + version);
+            if (optimisticLock) {
+                sqlupdates.add("update appdata set status = 1, version = "+ nextversion +"  where status = 0 and key = '"+ key +"' and version = " + version);
+            } else {
+                sqlupdates.add(key);
+            }
             if (li != null) {
                 li.add(recordLine);
             } else {
@@ -71,7 +88,7 @@ public class PlukkUtData {
     }
 
 
-    private void batchUpdate(List<String> sqls) {
+    private void batchUpdateOptimisticLock(List<String> sqls) {
         int[] results = null;
         if (sqls != null && sqls.size() > 0) {
             String sqlStrings[] = new String[sqls.size()];
@@ -86,5 +103,26 @@ public class PlukkUtData {
             throw new RuntimeException("Failed on optimistic locking");
         }
     }
-    
+
+
+    private void batchUpdatePessimisticLock(List<String> sqls) {
+        String ids = "";
+        for (int i = 0; i < sqls.size(); i++) {
+            String s = sqls.get(i);
+            ids += "'"+s+"',";
+            if ((i%1000) == 0) {
+                ids = ids.substring(0,ids.length()-1);
+                String updatesql = "update appdata set status = 1 where key in (" + ids + ")";
+                jdbcTemplate.update(updatesql);
+                ids = "";
+            }
+        }
+        if (ids.length() > 0) {
+            ids = ids.substring(0,ids.length()-1);
+            String updatesql = "update appdata set status = 1 where key in (" + ids + ")";
+            jdbcTemplate.update(updatesql);
+
+        }
+    }
+
 }

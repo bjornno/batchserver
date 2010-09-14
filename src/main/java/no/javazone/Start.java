@@ -87,6 +87,7 @@ public class Start {
             properties.put("server.port", "8080");
             properties.put("db.provision", "true");
             properties.put("db.environment", "test");
+            properties.put("db.optimisticLocking", "true");
             try {
                 properties.store(new FileOutputStream("application.properties"), null);
             } catch (Exception ex) {

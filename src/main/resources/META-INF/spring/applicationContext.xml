@@ -80,6 +80,7 @@
 
     <bean id="plukkUtData" class="no.javazone.domain.PlukkUtData">
         <constructor-arg><ref bean="dataSource"/></constructor-arg>
+        <property name="optimisticLock" value="${db.optimisticLocking}"/> 
     </bean>
 
 </beans>
