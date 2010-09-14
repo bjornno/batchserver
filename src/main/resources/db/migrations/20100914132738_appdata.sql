@@ -1,4 +1,4 @@
-drop table if exists appdata;
+--drop table if exists appdata;
 
 create table appdata (
   key varchar(255),

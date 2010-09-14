@@ -1,4 +1,4 @@
-drop table if exists errormessages;
+--drop table if exists errormessages;
 
 create table errormessages (
   key varchar(255),
@@ -7,7 +7,7 @@ create table errormessages (
   time date
 );
 
-drop table if exists events;
+--drop table if exists events;
 
 create table events (
   key varchar(255),

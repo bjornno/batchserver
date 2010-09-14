@@ -1,4 +1,4 @@
-drop table if exists application_properties;
+--drop table if exists application_properties;
 
 create table application_properties (
   key varchar(255),
